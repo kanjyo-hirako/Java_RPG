@@ -30,21 +30,21 @@ public class GameMenu extends JFrame {
     }
 
     private void initMenu() {
-        this.setTitle("Java RPG - 主菜单");
-        this.setSize(800, 600);
+        this.setTitle("Java RPG 冒险之旅");
+        this.setSize(950, 750);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout());
 
-        // 设置整个窗口的默认背景色，确保没有黑屏区域
-        this.getContentPane().setBackground(Color.DARK_GRAY);
+        // 设置整个窗口的默认背景色
+        this.getContentPane().setBackground(new Color(35, 35, 45));
 
         // 1. 创建并添加标题面板 (Title Panel)
         addTitlePanel();
 
         // 2. 创建并添加按钮面板 (Button Panel)
         addButtonPanel();
-        
+
         this.setVisible(true);
     }
 
@@ -53,30 +53,20 @@ public class GameMenu extends JFrame {
      */
     private void addTitlePanel() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 80)); 
-        titlePanel.setBackground(Color.DARK_GRAY);
-        titlePanel.setOpaque(true); // **【修正点】确保面板不透明**
-        
-        JLabel titleLabel = new JLabel("游戏标题 (图片缺失)");
-        titleLabel.setForeground(Color.YELLOW); // 确保文字对比度高
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 48));
+        titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 120));
+        titlePanel.setBackground(new Color(35, 35, 45));
+        titlePanel.setOpaque(true);
 
-        // 尝试加载图片
-        try {
-            // 尝试使用 ClassLoader 加载，以兼容 jar 包运行
-            URL imageUrl = getClass().getClassLoader().getResource(TITLE_IMAGE_PATH);
-            if (imageUrl == null) {
-                // 如果资源未找到，则抛出异常，让它显示默认文字
-                throw new IllegalArgumentException("Title image not found: " + TITLE_IMAGE_PATH);
-            }
-            
-            ImageIcon icon = new ImageIcon(imageUrl);
-            titleLabel.setIcon(icon);
-            titleLabel.setText(""); // 图片加载成功，清空文本
-        } catch (Exception e) {
-            System.err.println("警告: 无法加载标题图片. 显示默认文本. (" + e.getMessage() + ")");
-            titleLabel.setText("Java RPG Game"); // 图片加载失败，确保文字显示
-        }
+        JLabel titleLabel = new JLabel("Java RPG 冒险之旅");
+        titleLabel.setForeground(new Color(255, 223, 0)); // 更亮的金色文字
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 56));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+
+        // 添加阴影效果
+        titleLabel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(30, 30, 30, 30),
+            BorderFactory.createEtchedBorder(new Color(100, 100, 100), new Color(60, 60, 70))
+        ));
 
         titlePanel.add(titleLabel);
         this.add(titlePanel, BorderLayout.NORTH);
@@ -88,25 +78,25 @@ public class GameMenu extends JFrame {
     private void addButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setBackground(Color.DARK_GRAY);
-        buttonPanel.setOpaque(true); 
-        
-        buttonPanel.add(Box.createVerticalGlue()); 
+        buttonPanel.setBackground(new Color(35, 35, 45));
+        buttonPanel.setOpaque(true);
+
+        buttonPanel.add(Box.createVerticalGlue());
 
         // 创建按钮并添加到面板
-        buttonPanel.add(createImageButton("开始游戏", START_BUTTON_PATH, this::startGame));
+        buttonPanel.add(createImageButton("开始新的冒险", START_BUTTON_PATH, this::startGame));
         // 添加按钮之间的间距
-        buttonPanel.add(Box.createVerticalStrut(20));
-        
-        buttonPanel.add(createImageButton("读取存档", LOAD_BUTTON_PATH, this::loadGame));
-        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(Box.createVerticalStrut(30));
 
-        buttonPanel.add(createImageButton("设置面板", SETTINGS_BUTTON_PATH, this::showSettingsPanel));
-        buttonPanel.add(Box.createVerticalStrut(20));
+        buttonPanel.add(createImageButton("继续旅程", LOAD_BUTTON_PATH, this::loadGame));
+        buttonPanel.add(Box.createVerticalStrut(30));
 
-        buttonPanel.add(createImageButton("退出游戏", EXIT_BUTTON_PATH, this::exitGame));
+        buttonPanel.add(createImageButton("游戏设置", SETTINGS_BUTTON_PATH, this::showSettingsPanel));
+        buttonPanel.add(Box.createVerticalStrut(30));
 
-        buttonPanel.add(Box.createVerticalGlue()); 
+        buttonPanel.add(createImageButton("暂别世界", EXIT_BUTTON_PATH, this::exitGame));
+
+        buttonPanel.add(Box.createVerticalGlue());
 
         this.add(buttonPanel, BorderLayout.CENTER);
     }
@@ -117,9 +107,15 @@ public class GameMenu extends JFrame {
     private JLabel createImageButton(String defaultText, String imagePath, Runnable action) {
         JLabel button = new JLabel(defaultText, SwingConstants.CENTER);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setForeground(Color.WHITE); // 默认字体颜色
-        button.setFont(new Font("Serif", Font.BOLD, 24));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
+        button.setForeground(new Color(240, 240, 240)); // 默认浅白色字体
+        button.setFont(new Font("微软雅黑", Font.BOLD, 28));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(90, 90, 110), 2, true),
+            BorderFactory.createEmptyBorder(18, 30, 18, 30)
+        ));
+        button.setBackground(new Color(65, 65, 85));
+        button.setOpaque(true);
 
         boolean imageLoaded = false;
         try {
@@ -139,30 +135,55 @@ public class GameMenu extends JFrame {
         // 如果图片加载失败，确保文本显示且提供最小尺寸
         if (!imageLoaded) {
             button.setText(defaultText);
-            button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-            button.setPreferredSize(new Dimension(300, 50)); 
+            button.setPreferredSize(new Dimension(400, 80));
         }
 
         // 添加鼠标点击事件
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                // 添加点击效果和音效
+                button.setBackground(new Color(85, 85, 105));
+                // 播放点击音效（如果音频系统支持）
+                if (backgroundMusic != null) {
+                    // 可以在这里添加点击音效
+                }
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        Thread.sleep(100);
+                        button.setBackground(new Color(65, 65, 85));
+                    } catch (InterruptedException ex) {
+                        button.setBackground(new Color(65, 65, 85));
+                    }
+                });
                 action.run();
             }
 
-            @Override 
+            @Override
             public void mouseEntered(MouseEvent e) {
-                button.setForeground(Color.CYAN); // 悬停颜色
+                button.setForeground(new Color(255, 223, 0)); // 悬停时变为更亮的金色
+                button.setBackground(new Color(75, 75, 95));
+                button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(255, 223, 0), 2, true),
+                    BorderFactory.createEmptyBorder(18, 30, 18, 30)
+                ));
+                // 悬停音效
+                if (backgroundMusic != null) {
+                    // 可以在这里添加悬停音效
+                }
             }
 
-            @Override 
+            @Override
             public void mouseExited(MouseEvent e) {
-                button.setForeground(Color.WHITE); // 恢复默认颜色
+                button.setForeground(new Color(240, 240, 240)); // 恢复默认颜色
+                button.setBackground(new Color(65, 65, 85));
+                button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(90, 90, 110), 2, true),
+                    BorderFactory.createEmptyBorder(18, 30, 18, 30)
+                ));
             }
         });
-        
-        // **【修正点】**：确保按钮容器也是不透明的，以便正确显示背景色
-        button.setOpaque(false); // 按钮本身不需要背景色
+
         return button;
     }
 
@@ -175,49 +196,193 @@ public class GameMenu extends JFrame {
     }
 
     private void loadGame() {
-        if (GameSaver.hasSaveFile()) {
-            SaveData data = GameSaver.loadGame();
-            if (data != null) {
-                System.out.println("--- 读取存档成功 ---");
-                this.dispose();
-                // 使用新的构造函数启动游戏
-                new GameMap(data); 
-            } else {
-                JOptionPane.showMessageDialog(this, "读取存档失败！文件可能已损坏。", "错误", JOptionPane.ERROR_MESSAGE);
+        // 检查是否有任何存档
+        boolean hasAnySave = false;
+        for (int i = 1; i <= GameSaver.getMaxSaveSlots(); i++) {
+            if (GameSaver.hasSaveFile(i)) {
+                hasAnySave = true;
+                break;
+            }
+        }
+
+        if (hasAnySave) {
+            // 构建槽位选项
+            String[] options = new String[GameSaver.getMaxSaveSlots()];
+            int validSlotCount = 0;
+
+            for (int i = 0; i < options.length; i++) {
+                int slot = i + 1;
+                if (GameSaver.hasSaveFile(slot)) {
+                    options[i] = "槽位 " + slot + " (已存档)";
+                    validSlotCount++;
+                } else {
+                    options[i] = "槽位 " + slot + " (空)";
+                }
+            }
+
+            // 如果只有一个有效存档，直接加载它
+            if (validSlotCount == 1) {
+                int slotToLoad = -1;
+                for (int i = 1; i <= GameSaver.getMaxSaveSlots(); i++) {
+                    if (GameSaver.hasSaveFile(i)) {
+                        slotToLoad = i;
+                        break;
+                    }
+                }
+
+                if (slotToLoad != -1) {
+                    loadGameFromSlot(slotToLoad);
+                    return;
+                }
+            }
+
+            // 显示选择对话框
+            int selectedSlot = JOptionPane.showOptionDialog(
+                this,
+                "请选择要读取的存档槽位:",
+                "读取游戏",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+            );
+
+            if (selectedSlot >= 0 && GameSaver.hasSaveFile(selectedSlot + 1)) {
+                loadGameFromSlot(selectedSlot + 1);
+            } else if (selectedSlot >= 0) {
+                JOptionPane.showMessageDialog(this, "该槽位没有存档。", "提示", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "没有找到存档记录。", "提示", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "没有找到任何存档记录。", "提示", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void loadGameFromSlot(int slot) {
+        SaveData data = GameSaver.loadGame(slot);
+        if (data != null) {
+            System.out.println("--- 读取存档成功 (槽位 " + slot + ") ---");
+            this.dispose();
+            // 使用新的构造函数启动游戏
+            new GameMap(data);
+        } else {
+            JOptionPane.showMessageDialog(this, "读取存档失败！文件可能已损坏。", "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void showSettingsPanel() {
-        JDialog settingsDialog = new JDialog(this, "设置", true);
-        settingsDialog.setSize(300, 200);
+        JDialog settingsDialog = new JDialog(this, "游戏设置", true);
+        settingsDialog.setSize(450, 300);
         settingsDialog.setLocationRelativeTo(this);
-        settingsDialog.setLayout(new FlowLayout());
+        settingsDialog.getContentPane().setBackground(new Color(35, 35, 45));
+
+        // 创建主面板
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(new Color(35, 35, 45));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+        // 创建标题标签
+        JLabel titleLabel = new JLabel("游戏设置", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(255, 223, 0)); // 更亮的金色
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // 创建音量控制面板
+        JPanel volumePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        volumePanel.setBackground(new Color(50, 50, 65));
+        volumePanel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(90, 90, 110), 2, true),
+            "音量控制",
+            0,
+            0,
+            new Font("微软雅黑", Font.PLAIN, 16),
+            new Color(220, 220, 220)
+        ));
 
         JLabel volumeLabel = new JLabel("音量:");
+        volumeLabel.setForeground(new Color(240, 240, 240));
+        volumeLabel.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+
         JSlider volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
         volumeSlider.setMajorTickSpacing(25);
+        volumeSlider.setMinorTickSpacing(5);
         volumeSlider.setPaintTicks(true);
         volumeSlider.setPaintLabels(true);
+        volumeSlider.setBackground(new Color(50, 50, 65));
+        volumeSlider.setForeground(new Color(240, 240, 240));
+        volumeSlider.setFont(new Font("微软雅黑", Font.PLAIN, 12));
 
         // 设置初始音量
         backgroundMusic.setVolume(50);
-        
+
         volumeSlider.addChangeListener(e -> {
             int volume = volumeSlider.getValue();
             backgroundMusic.setVolume(volume);
             System.out.println("音量调节到: " + volumeSlider.getValue());
         });
 
-        settingsDialog.add(volumeLabel);
-        settingsDialog.add(volumeSlider);
-        
-        JButton closeButton = new JButton("确定");
-        closeButton.addActionListener(e -> settingsDialog.dispose());
-        settingsDialog.add(closeButton);
+        volumePanel.add(volumeLabel);
+        volumePanel.add(volumeSlider);
 
+        // 创建按钮面板
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(new Color(35, 35, 45));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+
+        JButton closeButton = new JButton("确定");
+        closeButton.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        closeButton.setBackground(new Color(70, 130, 180));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setFocusPainted(false);
+        closeButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(70, 130, 180).darker(), 2, true),
+            BorderFactory.createEmptyBorder(10, 25, 10, 25)
+        ));
+
+        closeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                closeButton.setBackground(new Color(100, 149, 237));
+                closeButton.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(70, 130, 180).darker().darker(), 2, true),
+                    BorderFactory.createEmptyBorder(10, 25, 10, 25)
+                ));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                closeButton.setBackground(new Color(70, 130, 180));
+                closeButton.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(70, 130, 180).darker(), 2, true),
+                    BorderFactory.createEmptyBorder(10, 25, 10, 25)
+                ));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 添加点击确认音效
+                if (backgroundMusic != null) {
+                    // 可以在这里添加确认音效
+                }
+            }
+        });
+
+        closeButton.addActionListener(e -> {
+            // 添加关闭动画效果
+            settingsDialog.dispose();
+        });
+
+        buttonPanel.add(closeButton);
+
+        // 组装界面
+        mainPanel.add(titleLabel);
+        mainPanel.add(Box.createVerticalStrut(25));
+        mainPanel.add(volumePanel);
+        mainPanel.add(Box.createVerticalStrut(25));
+        mainPanel.add(buttonPanel);
+
+        settingsDialog.add(mainPanel);
         settingsDialog.setVisible(true);
     }
     

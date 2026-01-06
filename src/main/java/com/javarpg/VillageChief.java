@@ -8,20 +8,19 @@ public class VillageChief extends Enemy {
     }
 
     @Override
-    public void actInBattle(Character target, BattleEngine engine) {
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
         Random rand = new Random();
         // 15%概率使用重击
         if (rand.nextDouble() < 0.15) {
-            heavyStrike(target, engine);
-            return;
+            return heavyStrike(target, engine);
         }
-        engine.basicAttack(this, target);
+        return engine.basicAttack(this, target);
     }
 
     // 重击：造成额外伤害
-    public void heavyStrike(Character target, BattleEngine engine) {
-        System.out.println("村庄首领发动重击！");
+    public BattleLog heavyStrike(Character target, BattleEngine engine) {
         int damage = (int) (this.getAttack() * 1.5);
         target.takeDamage(damage);
+        return new BattleLog("村庄首领发动重击！对 " + target.getName() + " 造成 " + damage + " 点伤害。");
     }
 }

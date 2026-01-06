@@ -8,26 +8,25 @@ public class CaveBeast extends Enemy {
     }
 
     @Override
-    public void actInBattle(Character target, BattleEngine engine) {
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
         Random rand = new Random();
         // 25%概率使用地震攻击
         if (rand.nextDouble() < 0.25) {
-            earthquake(target, engine);
-            return;
+            return earthquake(target, engine);
         }
         // 15%概率防御姿态，提升防御力
         if (rand.nextDouble() < 0.15) {
             defend();
-            return;
+            return new BattleLog("洞穴巨兽进入防御姿态，防御力大幅提升！");
         }
-        engine.basicAttack(this, target);
+        return engine.basicAttack(this, target);
     }
 
     // 地震：对目标造成大量伤害
-    public void earthquake(Character target, BattleEngine engine) {
-        System.out.println("洞穴巨兽引发强烈地震！");
+    public BattleLog earthquake(Character target, BattleEngine engine) {
         int damage = (int) (this.getAttack() * 2.5);
         target.takeDamage(damage);
+        return new BattleLog("洞穴巨兽引发强烈地震！对 " + target.getName() + " 造成 " + damage + " 点伤害。");
     }
 
     // 防御姿态：提升防御力

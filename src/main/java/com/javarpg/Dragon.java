@@ -8,26 +8,25 @@ public class Dragon extends Monster {
     }
 
     @Override
-    public void actInBattle(Character target, BattleEngine engine) {
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
         Random rand = new Random();
         // 20%概率使用火焰吐息
         if (rand.nextDouble() < 0.2) {
-            fireBreath(target, engine);
-            return;
+            return fireBreath(target, engine);
         }
         // 10%概率恢复生命值
         if (rand.nextDouble() < 0.1) {
             heal();
-            return;
+            return new BattleLog("火焰巨龙恢复了一些生命值！恢复了 30 点生命值。");
         }
-        engine.basicAttack(this, target);
+        return engine.basicAttack(this, target);
     }
 
     // 火焰吐息：造成大量伤害
-    public void fireBreath(Character target, BattleEngine engine) {
-        System.out.println("火焰巨龙喷出炽热的龙息！");
+    public BattleLog fireBreath(Character target, BattleEngine engine) {
         int damage = this.getAttack() * 2;
         target.takeDamage(damage);
+        return new BattleLog("火焰巨龙喷出炽热的龙息！对 " + target.getName() + " 造成 " + damage + " 点伤害。");
     }
 
     // 治疗：恢复一定生命值

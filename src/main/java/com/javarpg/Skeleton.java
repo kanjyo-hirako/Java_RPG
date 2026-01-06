@@ -8,14 +8,14 @@ public class Skeleton extends Monster {
     }
 
     @Override
-    public void actInBattle(Character target, BattleEngine engine) {
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
         Random rand = new Random();
         // 15%概率格挡，减少受到的伤害
         if (rand.nextDouble() < 0.15) {
             defend(engine);
-            return;
+            return new BattleLog("骷髅战士举起盾牌格挡！防御力临时提升。");
         }
-        engine.basicAttack(this, target);
+        return engine.basicAttack(this, target);
     }
 
     // 格挡：临时提升防御力

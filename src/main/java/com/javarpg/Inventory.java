@@ -99,14 +99,45 @@ public class Inventory implements java.io.Serializable {
 
 
     //背包窗口
-    public void showInventory(Magician user,JFrame Parent){
-        inventoryFrame=new JFrame("背包道具栏(按esc退出)");
-        inventoryFrame.setSize(300,200);
+    public void showInventory(Magician user, JFrame Parent) {
+        inventoryFrame = new JFrame("背包道具栏 - " + user.getName());
+        inventoryFrame.setSize(450, 350);
         inventoryFrame.setLocationRelativeTo(Parent);
-        inventoryFrame.setLayout(new FlowLayout(FlowLayout.CENTER,20,20));
-        inventoryFrame.setAlwaysOnTop(true);
         inventoryFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        inventoryFrame.getContentPane().setBackground(new Color(35, 35, 45));
+        inventoryFrame.setAlwaysOnTop(true); // 确保背包窗口总是在最前面
 
+        // 创建主面板
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(new Color(35, 35, 45));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // 创建标题标签
+        JLabel titleLabel = new JLabel("背包道具", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(255, 223, 0)); // 更亮的金色
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // 创建道具面板
+        JPanel itemsPanel = new JPanel();
+        itemsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 18, 18));
+        itemsPanel.setBackground(new Color(50, 50, 65));
+        itemsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // 创建提示标签
+        JLabel hintLabel = new JLabel("按 ESC 键关闭背包", SwingConstants.CENTER);
+        hintLabel.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        hintLabel.setForeground(new Color(220, 220, 220));
+        hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        mainPanel.add(titleLabel);
+        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(itemsPanel);
+        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(hintLabel);
+
+        inventoryFrame.add(mainPanel);
 
         inventoryFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -114,56 +145,127 @@ public class Inventory implements java.io.Serializable {
                 // 窗口关闭后，将焦点返回给父窗口
                 if (Parent != null) {
                     Parent.requestFocusInWindow();
-                    Parent.toFront();  // 将父窗口带到前面
+                    Parent.toFront(); // 将父窗口带到前面
                 }
             }
         });
-        
-        inventoryFrame.addKeyListener(new KeyAdapter(){
+
+        inventoryFrame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode()==KeyEvent.VK_ESCAPE){
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     inventoryFrame.dispose();
                 }
             }
         });
-        //获取窗口的焦点，确保键盘事件能够被正确捕获
+
+        // 获取窗口的焦点，确保键盘事件能够被正确捕获
         inventoryFrame.setFocusable(true);
         inventoryFrame.requestFocusInWindow();
-        //绘制背包窗口
-        repaintInventory(user);
-        inventoryFrame.setVisible(true);
-        
 
-        
+        // 绘制背包窗口
+        repaintInventory(user, itemsPanel);
+        inventoryFrame.setVisible(true);
     }
 
 
-    public void repaintInventory(Magician user){
-        inventoryFrame.getContentPane().removeAll();
-        
-        for(Item item:items){
-            JButton itemButton=new JButton(item.getName()+"*"+item.getCount());
-            if (!item.getCount().equals(0)){
-                itemButton.addActionListener(e->FrameUse(user,item));
-                inventoryFrame.getContentPane().add(itemButton);
+    public void repaintInventory(Magician user) {
+        // 这个方法保持向后兼容
+        repaintInventory(user, null);
+    }
+
+    public void repaintInventory(Magician user, JPanel itemsPanel) {
+        if (itemsPanel != null) {
+            // 清除旧的道具按钮
+            itemsPanel.removeAll();
+
+            // 添加道具按钮
+            for (Item item : items) {
+                if (!item.getCount().equals(0)) {
+                    JButton itemButton = createItemButton(item);
+                    itemButton.addActionListener(e -> FrameUse(user, item));
+                    itemsPanel.add(itemButton);
+                }
             }
+
+            itemsPanel.revalidate();
+            itemsPanel.repaint();
+        } else {
+            // 向后兼容的实现
+            inventoryFrame.getContentPane().removeAll();
+
+            for (Item item : items) {
+                JButton itemButton = new JButton(item.getName() + "*" + item.getCount());
+                if (!item.getCount().equals(0)) {
+                    itemButton.addActionListener(e -> FrameUse(user, item));
+                    inventoryFrame.getContentPane().add(itemButton);
+                }
+            }
+            inventoryFrame.getContentPane().validate();
+            inventoryFrame.getContentPane().repaint();
         }
-        inventoryFrame.getContentPane().validate();
-        inventoryFrame.getContentPane().repaint();
+    }
 
+    // 创建样式化的道具按钮
+    private JButton createItemButton(Item item) {
+        JButton button = new JButton("<html><center>" + item.getName() + "<br/>数量: " + item.getCount() + "</center></html>");
+        button.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        button.setBackground(new Color(90, 90, 140));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(110, 110, 160), 2, true),
+            BorderFactory.createEmptyBorder(12, 20, 12, 20)
+        ));
 
+        // 添加悬停和点击效果
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                button.setBackground(new Color(110, 110, 160));
+                button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(130, 130, 180), 2, true),
+                    BorderFactory.createEmptyBorder(12, 20, 12, 20)
+                ));
+            }
 
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                button.setBackground(new Color(90, 90, 140));
+                button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(110, 110, 160), 2, true),
+                    BorderFactory.createEmptyBorder(12, 20, 12, 20)
+                ));
+            }
+
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                // 添加点击反馈效果
+                button.setBackground(new Color(130, 130, 180));
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        Thread.sleep(100);
+                        button.setBackground(new Color(110, 110, 160));
+                    } catch (InterruptedException ex) {
+                        button.setBackground(new Color(110, 110, 160));
+                    }
+                });
+            }
+        });
+
+        return button;
     }
 
     public void FrameUse(Magician user,Item item){
         item.use(user);
         if(combatUIupdateCallback!=null){
-
             combatUIupdateCallback.run();
             System.out.println("回调结束");
         }
-        repaintInventory(user);
+        // 使用道具后自动关闭背包窗口
+        if(inventoryFrame != null) {
+            inventoryFrame.dispose();
+        }
     }
 
 

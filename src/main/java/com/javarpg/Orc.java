@@ -8,20 +8,19 @@ public class Orc extends Monster {
     }
 
     @Override
-    public void actInBattle(Character target, BattleEngine engine) {
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
         Random rand = new Random();
         // 10%概率狂暴，攻击力提升
         if (rand.nextDouble() < 0.1) {
-            enrage(target, engine);
-            return;
+            return enrage(target, engine);
         }
-        engine.basicAttack(this, target);
+        return engine.basicAttack(this, target);
     }
 
     // 狂暴：临时提升攻击力
-    public void enrage(Character target, BattleEngine engine) {
-        System.out.println("兽人战士进入狂暴状态，攻击力大幅提升！");
+    public BattleLog enrage(Character target, BattleEngine engine) {
         this.setAttack(this.getAttack() + 10);
         engine.basicAttack(this, target);
+        return new BattleLog("兽人战士进入狂暴状态，攻击力大幅提升！对 " + target.getName() + " 发动攻击。");
     }
 }

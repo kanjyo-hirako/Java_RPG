@@ -8,15 +8,15 @@ public class Enemy extends Character{
         this.expReward = expReward;
     }
 
-    public void actInBattle(Character target, BattleEngine engine) {
-        engine.basicAttack(this, target);
+    public BattleLog actInBattle(Character target, BattleEngine engine) {
+        return engine.basicAttack(this, target);
     }
     public int getExpReward() { return expReward; }
 
     @Override
     public void displayStatus() {
-        System.out.println("敌人状态：" + getName() + " Lv." + getLevel() + 
-                           " HP:" + getHP() + "/" + getMaxHP() + 
+        System.out.println("敌人状态：" + getName() + " Lv." + getLevel() +
+                           " HP:" + getHP() + "/" + getMaxHP() +
                            " MP:" + getMP() + "/" + getMaxMP());
     }
 }

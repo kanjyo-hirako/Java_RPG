@@ -9,7 +9,8 @@
       "Bash(javac SimpleAudioTest.java)",
       "Bash(java -cp .)",
       "Bash(out SimpleAudioTest)",
-      "Bash(java -cp \".;out\" SimpleAudioTest)"
+      "Bash(java -cp \".;out\" SimpleAudioTest)",
+      "Bash(java -cp out main.java.com.javarpg.GameApp)"
     ],
     "deny": [],
     "ask": []
