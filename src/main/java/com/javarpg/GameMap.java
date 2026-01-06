@@ -52,6 +52,67 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
     private String [][] terrain;
     // NPC 地图：存放 NPC 实例
     private Map<String,NPC>npcMap=new HashMap<>();
+
+    // 根据玩家等级生成合适的随机敌人
+    private Enemy generateRandomEnemy(int playerLevel) {
+        Random random = new Random();
+
+        // 根据玩家等级确定可遇到的敌人类型
+        // 等级1-2：史莱姆、哥布林
+        // 等级3-4：骷髅战士、兽人战士
+        // 等级5+：火焰巨龙
+
+        if (playerLevel <= 2) {
+            int enemyType = random.nextInt(2);
+            if (enemyType == 0) {
+                return new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
+            } else {
+                return new Goblin();
+            }
+        } else if (playerLevel <= 4) {
+            int enemyType = random.nextInt(3);
+            switch (enemyType) {
+                case 0:
+                    return new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
+                case 1:
+                    return new Goblin();
+                case 2:
+                    return new Skeleton();
+                default:
+                    return new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
+            }
+        } else {
+            // 等级5以上可能遇到更强大的敌人
+            int enemyType = random.nextInt(4);
+            switch (enemyType) {
+                case 0:
+                    return new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
+                case 1:
+                    return new Goblin();
+                case 2:
+                    return new Skeleton();
+                case 3:
+                    return new Orc();
+                default:
+                    return new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
+            }
+        }
+    }
+
+    // 为不同地图生成相应的Boss
+    private Enemy generateBossForMap(String mapName) {
+        switch (mapName) {
+            case "village":
+                return new VillageChief();
+            case "forest":
+                return new ForestGuardian();
+            case "cave":
+                return new CaveBeast();
+            default:
+                // 最终Boss
+                return new FinalBoss();
+        }
+    }
     
     // 战斗引擎：处理所有战斗计算
     private BattleEngine battleEngine = new BattleEngine();
@@ -192,9 +253,34 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
                     if (mapData[i][j].equals("N")){
                         String npc_y=Integer.valueOf(i).toString();
                         String npc_x=Integer.valueOf(j).toString();
-                        nowNPC.put(npc_y+","+npc_x, new NPC("村民", java.util.Arrays.asList("你好，冒险者！", "最近村子不太平，小心行事。", "愿星光指引你的道路。")));
+                        // 根据地图和位置决定NPC类型
+                        NPC npc;
+                        if (mapName.equals("village")) {
+                            // 在村庄地图中，第一个N是村民，第二个是长老，第三个是商人
+                            if (j == 3 && i == 3) {
+                                npc = new Elder();
+                            } else if (j == 0 && i == 3) {
+                                npc = new Shopkeeper();
+                            } else {
+                                npc = new Villager();
+                            }
+                        } else if (mapName.equals("forest")) {
+                            // 在森林地图中，第一个N是村民，其他是旅行者
+                            if (j == 3 && i == 3) {
+                                npc = new Villager();
+                            } else {
+                                npc = new NPC("旅行者", java.util.Arrays.asList(
+                                    "这片森林充满了危险，你要小心。",
+                                    "我听说深处有一只可怕的守护者。",
+                                    "找到正确的道路才能穿越这片森林。"));
+                            }
+                        } else {
+                            // 其他地图使用默认村民
+                            npc = new Villager();
+                        }
+                        nowNPC.put(npc_y+","+npc_x, npc);
                     }
-                    row.add(null); 
+                    row.add(null);
                 }
                 now.add(row);
             }
@@ -299,7 +385,7 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
         // 2. 将玩家实体放置到新位置
         gm.get(y).set(x, m);
 
-        // 3. 检查是否触发事件 
+        // 3. 检查是否触发事件
         String currentTerrain = terrain[y][x];
         if (currentTerrain.equals("N")) {
             String npcKey = y + "," + x;
@@ -313,19 +399,14 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
             if(terrain[y][x].equals(".")){
                 if(random.nextDouble()<rate){
                     System.out.println("遇到敌人");
-                    Enemy encounteredEnemy ;
-                    int enemyType = random.nextInt(2);
-                    if (enemyType == 0) {
-                        encounteredEnemy = new Monster("史莱姆", 50, 0, 10, 5, 1, 10);
-                    } else {
-                        encounteredEnemy = new Monster("哥布林", 70, 10, 15, 8, 2, 15);
+                    Enemy encounteredEnemy = generateRandomEnemy(m.getLevel());
+                    if (encounteredEnemy != null) {
+                        fight(encounteredEnemy);
                     }
-                    fight(encounteredEnemy);
                 }
             }if(terrain[y][x].equals("!")){
                     System.out.println("遇到敌人");
-                    Enemy encounteredEnemy ;
-                    encounteredEnemy = new Godzila();
+                    Enemy encounteredEnemy = generateBossForMap(mapName);
                     fight(encounteredEnemy);
             }
         }
@@ -443,15 +524,14 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
     private void fleeBattle(JFrame frame, Enemy g) {
         frame.dispose(); // 关闭战斗窗口
 
-        // 检查敌人是否是Godzila
-        if (g instanceof Godzila) {
-            show("勇气是人类的赞歌，而你显然失去了勇气...");
-            System.exit(0); // 结束程序
+        // 检查敌人是否是最终Boss
+        if (g instanceof FinalBoss) {
+            show("面对如此强大的敌人，逃跑是明智的选择...\n但你终究还是要面对它的，勇者。");
         } else {
             show("算你运气好，给你成功逃跑了。");
-            // 战斗结束后，刷新一次地图，确保 UI 状态更新
-            addGameMap();
         }
+        // 战斗结束后，刷新一次地图，确保 UI 状态更新
+        addGameMap();
     }
 
     public void Inventoryabout(JFrame fightFrame,Enemy g){
@@ -508,10 +588,19 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
         frame.dispose(); // 关闭战斗窗口
         int HPcount=0;
         int MPcount=0;
-        
+
         if (playerWon) {
+            // 检查是否击败了最终Boss
+            if (g instanceof FinalBoss) {
+                // 玩家击败了最终Boss，游戏胜利
+                show("恭喜你，勇者！你已经击败了暗影魔王，拯救了这个世界！\n你的冒险故事将被永远传颂！");
+                // 可以在这里添加游戏胜利后的处理逻辑
+                System.exit(0); // 结束游戏
+                return;
+            }
+
             // 结算奖励并更新玩家状态 (LevelUp/Exp)
-            if (g.getName().equals("哥斯拉")){
+            if (g instanceof VillageChief || g instanceof ForestGuardian || g instanceof CaveBeast) {
                 HPcount=10;
                 MPcount=10;
                 inventory.addItem("HP",10);
@@ -521,7 +610,8 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
                     }else if(mapName.equals("forest")){
                         showmapName="cave";
                     }else if(mapName.equals("cave")){
-                        this.win=true;
+                        // 在洞穴地图中击败Boss后，进入最终战斗区域
+                        showmapName="final"; // 这里可以根据需要调整
                     }
             }else{
                 HPcount=3;

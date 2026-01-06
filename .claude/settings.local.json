@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(javac -d out src/main/java/com/javarpg/*.java)",
+      "Bash(tree -L 3)",
+      "Bash(java -cp out main.java.com.javarpg.AudioPlayer)",
+      "Bash(javac -d out src/main/java/com/javarpg/AudioTest.java)",
+      "Bash(java -cp out main.java.com.javarpg.AudioTest)",
+      "Bash(javac SimpleAudioTest.java)",
+      "Bash(java -cp .)",
+      "Bash(out SimpleAudioTest)",
+      "Bash(java -cp \".;out\" SimpleAudioTest)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

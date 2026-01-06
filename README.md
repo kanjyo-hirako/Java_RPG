@@ -6,13 +6,23 @@
 
 **开发环境**：JDK 1.8+ / IntelliJ IDEA /  Trae IDEA
 
+**个人模型环境有使用**： Gemini-3   Claude接入（Kimi-k2 & Qwen3-Coder） 
+
+
+
 ## 要求可见于 java_project.pdf 中
 
+对应成员名单如下：（此处不上传至Github）
 
+何智(2024463030609)**[Cai_Tang]**          邹敏杰(2024463030638)   **[zmj001]**
+
+钟嘉嘉 (2024463030635) **[盛夏的她]**      陈禹希(2024463030605)  **[cyxx]**
 
 ##### 本项目已上传至www.github.com/Cai-Tang-www/Java-RPG     权限为公开
 
 有完整的上传历史和哈希确保不是ai一次性的应付（）
+
+
 
 *可能确实简陋些但能确保ai率小于20%并且都学习并理解*
 
@@ -84,7 +94,11 @@
 
 作为四人小组，我们在项目中采用了模块化分工，旨在模拟真实的软件开发流程：
 
+对应成员名单如下：（此处不上传至Github）
 
+何智(2024463030609)**[Cai_Tang]**          邹敏杰(2024463030638)   **[zmj001]**
+
+钟嘉嘉 (2024463030635) **[盛夏的她]**      陈禹希(2024463030605)  **[cyxx]**
 
 1. **分层架构与解耦**:
 
@@ -132,10 +146,10 @@
 
    ```
    javac -d out src/main/java/com/javarpg/*.java
-   java -cp out main.java.com.javarpg.GameApp
+   java -cp ".;out;out/main/resources" main.java.com.javarpg.GameApp
    ```
 
-   *(注：或直接在 IDEA / Eclipse 中运行 `GameApp.main()`)*
+   (注：或直接运行 **run.bat**)
 
  燃尽了  晚安
 
