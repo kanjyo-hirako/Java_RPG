@@ -9,7 +9,7 @@ public class SaveData implements Serializable {
     public Inventory inventory;
     public int mapX;
     public int mapY;
-    public String mapName; // 新增：保存当前地图名称
+    public String mapName; 
 
     public SaveData(Magician player, Inventory inventory, int mapX, int mapY, String mapName) {
         this.player = player;

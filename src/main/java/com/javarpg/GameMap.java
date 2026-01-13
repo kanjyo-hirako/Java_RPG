@@ -457,6 +457,7 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
         victoryButton.setFocusPainted(false);
         victoryButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         victoryButton.addActionListener(e -> triggerVictory());
+        victoryButton.setFocusable(false);
 
         infoPanel.add(mapLabel);
         infoPanel.add(Box.createVerticalStrut(8));
@@ -1253,7 +1254,53 @@ public class GameMap extends JFrame implements KeyListener, MouseListener {
 
     // 一键胜利功能（仅用于演示）
     public void triggerVictory() {
-        showVictoryMessage();
+        // 创建一个假的最终Boss用于测试胜利条件
+        FinalBoss fakeBoss = new FinalBoss();
+        fakeBoss.takeDamage(fakeBoss.getHP()); // 瞬间击败Boss
+
+        // 设置标志表示玩家已经赢得游戏
+        win = true;
+
+        // 显示胜利消息但不结束整个游戏，允许玩家继续探索
+        JDialog victoryDialog = new JDialog(this, false); // 改为非模态对话框
+        victoryDialog.setTitle("恭喜通关");
+        victoryDialog.setSize(400, 200);
+        victoryDialog.setLocationRelativeTo(this);
+        victoryDialog.getContentPane().setBackground(new Color(50, 50, 60));
+        victoryDialog.setLayout(new BorderLayout(20, 20));
+
+        // 胜利消息标签
+        JLabel victoryLabel = new JLabel("<html><div style='text-align: center; font-family: 微软雅黑; font-size: 16px; color: #FFD700;'>恭喜你完成了游戏！你可以继续探索世界。</div></html>");
+        victoryLabel.setHorizontalAlignment(JLabel.CENTER);
+        victoryLabel.setVerticalAlignment(JLabel.CENTER);
+        victoryLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // 确定按钮
+        JButton okButton = new JButton("确定");
+        okButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        okButton.setBackground(new Color(70, 130, 180));
+        okButton.setForeground(Color.WHITE);
+        okButton.setFocusPainted(false);
+        okButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(70, 130, 180).darker(), 2, true),
+            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+
+        okButton.addActionListener(e -> victoryDialog.dispose());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(50, 50, 60));
+        buttonPanel.add(okButton);
+
+        victoryDialog.add(victoryLabel, BorderLayout.CENTER);
+        victoryDialog.add(buttonPanel, BorderLayout.SOUTH);
+        victoryDialog.setVisible(true);
+
+        // 确保主窗口重新获得焦点
+        this.requestFocusInWindow();
+
+        // 重新绘制地图以更新UI
+        addGameMap();
     }
 
     public void show(String s) {
